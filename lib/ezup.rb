@@ -10,13 +10,13 @@ module EasyUp
         @cgi_app = cgi_app
         @cgi_name = cgi_name
         @port = 8080
-        @handler = Rack::Handler::WEBrick
+        @server = Rack::Handler::WEBrick
       end
 
       attr_reader :cgi_app
       attr_reader :cgi_name
       attr_accessor :port
-      attr_accessor :handler
+      attr_accessor :server
     end
 
     class DSL
@@ -35,8 +35,8 @@ module EasyUp
         nil
       end
 
-      def handler(handler)
-        @c.handler = handler
+      def server(server)
+        @c.server = server
         nil
       end
 
@@ -59,15 +59,15 @@ module EasyUp
 
       for sig_name in %w[ INT TERM ]
         trap(sig_name) {
-          if (config.handler.respond_to? :shutdown) then
-            config.handler.shutdown
+          if (config.server.respond_to? :shutdown) then
+            config.server.shutdown
           else
             exit
           end
         }
       end
 
-      config.handler.run builder.to_app, :Port => config.port
+      config.server.run builder.to_app, :Port => config.port
     end
   end
 end
