@@ -5,7 +5,8 @@ require 'ezup'
 
 def ezup_main(env)
   [ 200, { 'Content-Type' => 'text/html' },
-    "<html><body><p>Hello world.</p></body></html>" ]
+    [ "<html><body><p>Hello world.</p></body></html>" ]
+  ]
 end
 
 ezup_run if $0 == __FILE__
