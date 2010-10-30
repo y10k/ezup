@@ -3,6 +3,9 @@
 port 8080
 handler Rack::Handler::WEBrick
 
+use Rack::ShowExceptions
+use Rack::Lint
+
 map '/' do
   run proc{|env|
     r = Rack::Request.new(env)
