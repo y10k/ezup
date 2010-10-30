@@ -57,10 +57,14 @@ module EasyUp
       conf_path = File.join(File.dirname($0), 'config_local.rb')
       dsl.instance_eval(IO.read(conf_path), conf_path)
 
-      if (config.handler == Rack::Handler::WEBrick) then
-        for sig_name in %w[ INT TERM ]
-          trap(sig_name) { Rack::Handler::WEBrick.shutdown }
-        end
+      for sig_name in %w[ INT TERM ]
+        trap(sig_name) {
+          if (config.handler.respond_to? :shutdown) then
+            config.handler.shutdown
+          else
+            exit
+          end
+        }
       end
 
       config.handler.run builder.to_app, :Port => config.port
