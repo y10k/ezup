@@ -40,6 +40,16 @@ module EasyUp
         nil
       end
 
+      def host(host)
+        @c.options[:Host] = host
+        nil
+      end
+
+      def option(name, value)
+        @c.option[name] = value
+        nil
+      end
+
       def_delegator :@b, :use
       def_delegator :@b, :map
     end
