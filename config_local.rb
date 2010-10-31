@@ -10,7 +10,7 @@ map '/' do
   run proc{|env|
     r = Rack::Request.new(env)
     redirect_url = "#{r.scheme}://#{r.host_with_port}/#{cgi_name}"
-    [ 302, { 'Location' => redirect_url }, '' ]
+    [ 302, { 'Content-Type' => 'text/plain', 'Location' => redirect_url }, [] ]
   }
 end
 
