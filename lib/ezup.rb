@@ -79,10 +79,13 @@ module EasyUp
 
       config.server.run(builder.to_app, config.options)
     end
+    module_function :ezup_run
   end
 end
 
-include EasyUp::LocalRunner
+def ezup_run
+  EasyUp::LocalRunner.ezup_run
+end
 
 # Local Variables:
 # mode: Ruby
