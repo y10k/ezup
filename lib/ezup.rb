@@ -9,14 +9,14 @@ module EasyUp
       def initialize(cgi_app, cgi_name)
         @cgi_app = cgi_app
         @cgi_name = cgi_name
-        @port = 8080
         @server = Rack::Handler::WEBrick
+        @options = { :Port => 8080 }
       end
 
       attr_reader :cgi_app
       attr_reader :cgi_name
-      attr_accessor :port
       attr_accessor :server
+      attr_reader :options
     end
 
     class DSL
@@ -30,13 +30,13 @@ module EasyUp
       def_delegator :@c, :cgi_app
       def_delegator :@c, :cgi_name
 
-      def port(port)
-        @c.port = port
+      def server(server)
+        @c.server = server
         nil
       end
 
-      def server(server)
-        @c.server = server
+      def port(port)
+        @c.options[:Port] = port
         nil
       end
 
@@ -67,7 +67,7 @@ module EasyUp
         }
       end
 
-      config.server.run builder.to_app, :Port => config.port
+      config.server.run(builder.to_app, config.options)
     end
   end
 end

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-port 8080
 server Rack::Handler::WEBrick
+port 8080
 
 use Rack::ShowExceptions
 use Rack::Lint
