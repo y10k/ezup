@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 # CGI environment easy setup and easy upload.
 
+require 'ezup/builder'
 require 'forwardable'
 
 module EasyUp
   module LocalRunner
+    TOP_LEVEL_BUILDER = Builder.new
+
     class Config
       def initialize(cgi_app, cgi_name)
         @cgi_app = cgi_app
@@ -57,7 +60,7 @@ module EasyUp
     def ezup_run
       require 'rack'
 
-      cgi_app = proc{|env| ezup_main(env) }
+      cgi_app = TOP_LEVEL_BUILDER.wrap_app(proc{|env| ezup_main(env) })
       cgi_name = File.basename($0, '.rb') + '.cgi'
 
       config = Config.new(cgi_app, cgi_name)
@@ -79,10 +82,17 @@ module EasyUp
 
       config.server.run(builder.to_app, config.options)
     end
+    module_function :ezup_run
   end
 end
 
-include EasyUp::LocalRunner
+def use(middleware, *args, &block)
+  EasyUp::LocalRunner::TOP_LEVEL_BUILDER.use(middleware, *args, &block)
+end
+
+def ezup_run
+  EasyUp::LocalRunner.ezup_run
+end
 
 # Local Variables:
 # mode: Ruby
