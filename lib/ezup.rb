@@ -6,6 +6,8 @@ require 'forwardable'
 
 module EasyUp
   module LocalRunner
+    TOP_LEVEL_BUILDER = Builder.new
+
     class Config
       def initialize(cgi_app, cgi_name)
         @cgi_app = cgi_app
@@ -58,7 +60,7 @@ module EasyUp
     def ezup_run
       require 'rack'
 
-      cgi_app = proc{|env| ezup_main(env) }
+      cgi_app = TOP_LEVEL_BUILDER.wrap_app(proc{|env| ezup_main(env) })
       cgi_name = File.basename($0, '.rb') + '.cgi'
 
       config = Config.new(cgi_app, cgi_name)
@@ -82,6 +84,10 @@ module EasyUp
     end
     module_function :ezup_run
   end
+end
+
+def use(middleware, *args, &block)
+  EasyUp::LocalRunner::TOP_LEVEL_BUILDER.use(middleware, *args, &block)
 end
 
 def ezup_run
