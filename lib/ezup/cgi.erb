@@ -1,6 +1,27 @@
 # -*- coding: utf-8 -*-
 # template code of CGI I/O
 
+module Kernel
+  alias ezup_original_require require
+
+  def require(path)
+    case (path)
+    <% for embedded_path in @c[:embedded_libraries] %>
+    when <%= embedded_path.dump %>, <%= (embedded_path + '.rb').dump %>
+      load_path = File.expand_path(File.join(File.dirname($0), <%= (embedded_path + '.rb').dump %>))
+      if ($".include? load_path) then
+        $" << load_path
+        true
+      else
+        false
+      end
+    <% end %>
+    else
+      ezup_original_require(path)
+    end
+  end
+end
+
 module EasyUp
   module CGIRunner
     TOP_LEVEL_BUILDER = Builder.new
