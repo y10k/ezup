@@ -3,6 +3,8 @@
 
 module EasyUp
   module CGIRunner
+    TOP_LEVEL_BUILDER = Builder.new
+
     HTTP_STATUS_CODES = {
       100  => 'Continue',
       101  => 'Switching Protocols',
@@ -92,6 +94,10 @@ module EasyUp
     end
     module_function :ezup_run
   end
+end
+
+def use(middleware, *args, &block)
+  EasyUp::CGIRunner::TOP_LEVEL_BUILDER.use(middleware, *args, &block)
 end
 
 def ezup_run
