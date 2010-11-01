@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # CGI environment easy setup and easy upload.
 
+require 'ezup/builder'
 require 'forwardable'
 
 module EasyUp
