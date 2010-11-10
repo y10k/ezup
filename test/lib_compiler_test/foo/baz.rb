@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-autoload :Bar, 'bar'
-
 module Foo
-  autoload :Baz, 'foo/baz'
+  class Baz
+  end
 end
 
 # Local Variables:

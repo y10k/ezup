@@ -18,7 +18,7 @@ module EasyUp::Test
     def test_scan_include_libraries
       require 'foo'
       @c.scan_include_libraries
-      assert_equal(%w[ ezup/builder foo ].sort,
+      assert_equal(%w[ ezup/builder foo bar foo/baz ].sort,
                    @c.include_libraries.map{|i| i.name }.sort)
     end
   end
