@@ -1,6 +1,24 @@
 # -*- coding: utf-8 -*-
 # CGI compiler
 
+module Kernel
+  alias ezup_original_autoload autoload
+
+  def autoload(const_name, feature)
+    require(feature)
+    nil
+  end
+end
+
+class Module
+  alias ezup_original_autoload autoload
+
+  def autoload(const_name, feature)
+    require(feature)
+    nil
+  end
+end
+
 module EasyUp
   class Compiler
     EZUP_LIB_DIR = File.expand_path(File.dirname(__FILE__)) + File::SEPARATOR
