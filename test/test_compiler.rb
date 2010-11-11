@@ -21,6 +21,69 @@ module EasyUp::Test
       assert_equal(%w[ ezup/builder foo bar foo/baz ].sort,
                    @c.include_libraries.map{|i| i.name }.sort)
     end
+
+    def test_parse
+      src = <<-'EOF'.each_line.to_a
+#!/usr/bin/ruby
+# -*- coding: utf-8 -*-
+
+print "Hello world.\n"
+      EOF
+
+      data = @c.parse(src)
+      assert_equal("#!/usr/bin/ruby\n", data.shebang)
+      assert_equal([ "# -*- coding: utf-8 -*-\n" ], data.header)
+      assert_equal([ "\n", "print \"Hello world.\\n\"\n" ], data.body)
+    end
+
+    def test_parse_no_shebang
+      src = <<-'EOF'.each_line.to_a
+# -*- coding: utf-8 -*-
+
+print "Hello world.\n"
+      EOF
+
+      data = @c.parse(src)
+      assert_equal(nil, data.shebang)
+      assert_equal([ "# -*- coding: utf-8 -*-\n" ], data.header)
+      assert_equal([ "\n", "print \"Hello world.\\n\"\n" ], data.body)
+    end
+
+    def test_parse_no_header
+      src = <<-'EOF'.each_line.to_a
+#!/usr/bin/ruby
+
+print "Hello world.\n"
+      EOF
+
+      data = @c.parse(src)
+      assert_equal("#!/usr/bin/ruby\n", data.shebang)
+      assert_equal([], data.header)
+      assert_equal([ "\n", "print \"Hello world.\\n\"\n" ], data.body)
+    end
+
+    def test_parse_no_body
+      src = <<-'EOF'.each_line.to_a
+#!/usr/bin/ruby
+# -*- coding: utf-8 -*-
+      EOF
+
+      data = @c.parse(src)
+      assert_equal("#!/usr/bin/ruby\n", data.shebang)
+      assert_equal([ "# -*- coding: utf-8 -*-\n" ], data.header)
+      assert_equal([], data.body)
+    end
+
+    def test_parse_body_only
+      src = <<-'EOF'.each_line.to_a
+print "Hello world.\n"
+      EOF
+
+      data = @c.parse(src)
+      assert_equal(nil, data.shebang)
+      assert_equal([], data.header)
+      assert_equal([ "print \"Hello world.\\n\"\n" ], data.body)
+    end
   end
 end
 
