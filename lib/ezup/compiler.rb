@@ -24,10 +24,12 @@ module EasyUp
     EZUP_LIB_DIR = File.expand_path(File.dirname(__FILE__)) + File::SEPARATOR
 
     def initialize
+      @ruby = nil
       @include_path = []
       @include_libraries = []
     end
 
+    attr_accessor :ruby
     attr_reader :include_libraries
 
     def add_include_path(lib_dir)
