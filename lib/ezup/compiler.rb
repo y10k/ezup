@@ -67,6 +67,42 @@ module EasyUp
         self
       end
     end
+
+    ParsedData = Struct.new(:shebang, :header, :body)
+
+    def parse(src)
+      data = ParsedData.new(nil, [], [])
+      state = :shebang
+
+      for line in src
+        case (state)
+        when :shebang
+          if (line =~ /^#!/) then
+            data.shebang = line
+            state = :header
+          elsif (line =~ /^#/) then
+            data.header << line
+            state = :header
+          else
+            data.body << line
+            state = :body
+          end
+        when :header
+          if (line =~ /^#/) then
+            data.header << line
+          else
+            data.body << line
+            state = :body
+          end
+        when :body
+          data.body << line
+        else
+          raise "unknown parser state: #{state}"
+        end
+      end
+
+      data
+    end
   end
 end
 
