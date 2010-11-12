@@ -27,6 +27,7 @@ module EasyUp
       end
 
       for filename in $"
+        next if (filename.end_with? '.so')
         if (filename.start_with? EZUP_LIB_DIR) then
           next if (filename == __FILE__)
           name = filename[EZUP_LIB_DIR.length..-1]
