@@ -27,11 +27,15 @@ module EasyUp
 
     def initialize
       @ruby = nil
+      @rubygems = false
+      @gem_home = nil
       @include_path = []
       @include_libraries = []
     end
 
     attr_accessor :ruby
+    attr_accessor :rubygems
+    attr_accessor :gem_home
     attr_reader :include_libraries
 
     def add_include_path(lib_dir)
@@ -115,7 +119,11 @@ module EasyUp
     end
 
     def make_cgi_builtin_code
-      c = { :embedded_libraries => %w[ ezup ] + @include_libraries.map{|i| i.name } }
+      c = {
+        :rubygems => @rubygems,
+        :gem_home => @gem_home,
+        :embedded_libraries => %w[ ezup ] + @include_libraries.map{|i| i.name }
+      }
       erb = ERB.new(IO.read(CGI_ERB, opt: { :encoding => Encoding::UTF_8 }))
       erb.result(CGIContext.new(c).instance_eval{ binding })
     end

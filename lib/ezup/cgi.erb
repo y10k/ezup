@@ -129,6 +129,14 @@ def ezup_run
   EasyUp::CGIRunner.ezup_run
 end
 
+<% if @c[:gem_home] then %>
+ENV['GEM_HOME'] = <%= @c[:gem_home].dump %>
+<% end %>
+
+<% if @c[:rubygems] then %>
+require 'rubygems'
+<% end %>
+
 # Local Variables:
 # mode: Ruby
 # indent-tabs-mode: nil
