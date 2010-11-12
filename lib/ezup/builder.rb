@@ -19,6 +19,10 @@ module EasyUp
       @constructor.call(app)
     end
   end
+
+  if (defined? CGIRunner) then
+    CGIRunner.top_level_builder = Builder.new
+  end
 end
 
 # Local Variables:
