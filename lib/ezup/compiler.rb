@@ -181,7 +181,7 @@ module EasyUp
       base_dir = File.dirname(filename)
       name = File.basename(filename, '.rb')
       cgi_name = File.join(base_dir, "#{name}.cgi")
-      config_yml = File.join(base_dir, 'config.yml')
+      config_yml = File.join(base_dir, 'config_server.yml')
 
       cc = Compiler.new
       if (File.exist? config_yml) then
