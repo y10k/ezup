@@ -119,6 +119,39 @@ module EasyUp
       erb = ERB.new(IO.read(CGI_ERB, opt: { :encoding => Encoding::UTF_8 }))
       erb.result(CGIContext.new(c).instance_eval{ binding })
     end
+
+    def compile(dst, src)
+      data = parse(src)
+
+      if (@ruby) then
+        dst << "#!#{@ruby}\n"
+      elsif (data.shebang) then
+        dst << data.shebang
+      end
+
+      for line in data.header
+        dst << line
+      end
+
+      dst << "\n\n"
+      dst << "## EZUP_CGI_BUILTIN_CODE\n"
+      dst << "\n"
+      dst << make_cgi_builtin_code
+      dst << "\n"
+
+      for lib_pair in @include_libraries
+        dst << "## EZUP_INCLUDE_LIBRARY: #{lib_pair.name}\n"
+        dst << "\n"
+        dst << IO.read(lib_pair.path, opt: { :encoding => Encoding::UTF_8 })
+        dst << "\n"
+      end
+
+      dst << "## EZUP_MAIN\n"
+      dst << "\n"
+      for line in data.body
+        dst << line
+      end
+    end
   end
 end
 
