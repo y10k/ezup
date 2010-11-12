@@ -3,6 +3,7 @@
 
 require 'ezup'
 require 'ezup/compiler'
+require 'rbconfig'
 require 'test/unit'
 
 module EasyUp::Test
@@ -83,6 +84,17 @@ print "Hello world.\n"
       assert_equal(nil, data.shebang)
       assert_equal([], data.header)
       assert_equal([ "print \"Hello world.\\n\"\n" ], data.body)
+    end
+
+    def test_make_cgi_builtin_code
+      require 'foo'
+      @c.scan_include_libraries
+      code = @c.make_cgi_builtin_code
+      File.open('test_compiler.test_make_cgi_builtin_code.log', 'w:utf-8') {|write_io|
+        write_io.write(code)
+      }
+      system("#{RbConfig::CONFIG['RUBY_INSTALL_NAME']} -wc test_compiler.test_make_cgi_builtin_code.log")
+      assert_equal(0, $?.exitstatus)
     end
   end
 end
