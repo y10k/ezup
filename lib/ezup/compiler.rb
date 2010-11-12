@@ -197,6 +197,7 @@ module EasyUp
         end
       end
 
+      EasyUp::Compiler.autoload_expand = conf['autoload_expand'] ? true : false
       load(File.expand_path(filename))
       cc.scan_include_libraries
 

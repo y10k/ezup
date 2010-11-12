@@ -1,5 +1,6 @@
 ruby: /usr/bin/ruby
 rubygems: true
 gem_home: /home/user/rubygems
+autoload_expand: false
 include_path:
   - lib
