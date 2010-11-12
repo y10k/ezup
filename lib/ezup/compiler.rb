@@ -9,7 +9,11 @@ module Kernel
   alias ezup_original_autoload autoload
 
   def autoload(const_name, feature)
-    require(feature)
+    if (EasyUp::Compiler.autoload_expand) then
+      require(feature)
+    else
+      ezup_original_autoload(const_name, feature)
+    end
     nil
   end
 end
@@ -18,13 +22,22 @@ class Module
   alias ezup_original_autoload autoload
 
   def autoload(const_name, feature)
-    require(feature)
+    if (EasyUp::Compiler.autoload_expand) then
+      require(feature)
+    else
+      ezup_original_autoload(const_name, feature)
+    end
     nil
   end
 end
 
 module EasyUp
   class Compiler
+    class << self
+      attr_accessor :autoload_expand
+    end
+    self.autoload_expand = false
+
     EZUP_LIB_DIR = File.expand_path(File.dirname(__FILE__)) + File::SEPARATOR
 
     def initialize

@@ -16,7 +16,12 @@ module EasyUp::Test
       @c.add_include_path(LIB_DIR)
     end
 
+    def teardown
+      EasyUp::Compiler.autoload_expand = false
+    end
+
     def test_scan_include_libraries
+      EasyUp::Compiler.autoload_expand = true
       require 'foo'
       @c.scan_include_libraries
       assert_equal(%w[ ezup/builder foo bar foo/baz ].sort,
@@ -87,6 +92,7 @@ print "Hello world.\n"
     end
 
     def test_make_cgi_builtin_code
+      EasyUp::Compiler.autoload_expand = true
       require 'foo'
       @c.scan_include_libraries
       code = @c.make_cgi_builtin_code
@@ -122,6 +128,7 @@ ezup_run if $0 == __FILE__
 # End:
       EOF
 
+      EasyUp::Compiler.autoload_expand = true
       require 'foo'
       @c.ruby = '/usr/bin/ruby'
       @c.scan_include_libraries
