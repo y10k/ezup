@@ -2,6 +2,8 @@
 # CGI compiler
 
 require 'erb'
+require 'fileutils'
+require 'yaml'
 
 module Kernel
   alias ezup_original_autoload autoload
@@ -159,6 +161,39 @@ module EasyUp
       for line in data.body
         dst << line
       end
+    end
+
+    def self.run(argv=ARGV)
+      filename = ARGV.shift or raise 'need for source code to compile.'
+      base_dir = File.dirname(filename)
+      name = File.basename(filename, '.rb')
+      cgi_name = File.join(base_dir, "#{name}.cgi")
+      config_yml = File.join(base_dir, 'config.yml')
+
+      cc = Compiler.new
+      if (File.exist? config_yml) then
+        conf = YAML.load_file(config_yml)
+        cc.ruby = conf['ruby'] if (conf.key? 'ruby')
+        cc.rubygems = conf['rubygems'] ? true : false
+        cc.gem_home = conf['gem_home'] if (conf.key? 'gem_home')
+        if (conf.key? 'include_path') then
+          for lib_dir in conf['include_path']
+            $: << File.expand_path(lib_dir)
+            cc.add_include_path(lib_dir)
+          end
+        end
+      end
+
+      load(File.expand_path(filename))
+      cc.scan_include_libraries
+
+      File.open(cgi_name, 'w:utf-8') {|write_io|
+        File.open(filename, 'r:utf-8') {|read_io|
+          cc.compile(write_io, read_io)
+        }
+      }
+
+      FileUtils.chmod(0755, cgi_name)
     end
   end
 end

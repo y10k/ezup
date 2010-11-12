@@ -1,0 +1,17 @@
+#!/usr/local/bin/ruby
+# -*- coding: utf-8 -*-
+
+cmd = ARGV.shift or raise 'need for ezup command.'
+
+case (cmd)
+when 'compile'
+  require 'ezup/compiler'
+  EasyUp::Compiler.run
+else
+  raise "unknown ezup command: #{cmd}"
+end
+
+# Local Variables:
+# mode: Ruby
+# indent-tabs-mode: nil
+# End:

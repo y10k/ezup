@@ -1,0 +1,5 @@
+ruby: /usr/bin/ruby
+rubygems: true
+gem_home: /home/user/rubygems
+include_path:
+  - lib
