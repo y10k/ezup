@@ -96,6 +96,41 @@ print "Hello world.\n"
       system("#{RbConfig::CONFIG['RUBY_INSTALL_NAME']} -wc test_compiler.test_make_cgi_builtin_code.log")
       assert_equal(0, $?.exitstatus)
     end
+
+    def test_compile
+      src = <<-'EOF'.each_line.to_a
+#!ruby
+# -*- coding: utf-8 -*-
+
+require 'ezup'
+require 'foo'
+require 'rack'
+
+use Rack::ContentLength
+
+def ezup_main(env)
+  [ 200, { 'Content-Type' => 'text/html' },
+    [ "<html><body><p>Hello world.</p></body></html>" ]
+  ]
+end
+
+ezup_run if $0 == __FILE__
+
+# Local Variables:
+# mode: Ruby
+# indent-tabs-mode: nil
+# End:
+      EOF
+
+      require 'foo'
+      @c.ruby = '/usr/bin/ruby'
+      @c.scan_include_libraries
+      File.open('test_compiler.test_compile.log', 'w:utf-8') {|write_io|
+        @c.compile(write_io, src)
+      }
+      system("#{RbConfig::CONFIG['RUBY_INSTALL_NAME']} -wc test_compiler.test_compile.log")
+      assert_equal(0, $?.exitstatus)
+    end
   end
 end
 
