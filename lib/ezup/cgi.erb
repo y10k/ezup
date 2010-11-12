@@ -24,7 +24,9 @@ end
 
 module EasyUp
   module CGIRunner
-    TOP_LEVEL_BUILDER = Builder.new
+    class << self
+      attr_accessor :top_level_builder
+    end
 
     HTTP_STATUS_CODES = {
       100  => 'Continue',
@@ -81,6 +83,8 @@ module EasyUp
     }
 
     def ezup_run
+      cgi_app = CGIRunner.top_level_builder.wrap_app(proc{|env| ezup_main(env) })
+
       STDIN.binmode
       STDIN.set_encoding(Encoding::ASCII_8BIT)
 
@@ -99,7 +103,7 @@ module EasyUp
       env['rack.multiprocess'] = true
       env['rack.run_once'] = true
 
-      status, header, body = ezup_main(env)
+      status, header, body = cgi_app.call(env)
 
       STDOUT.print "Status: #{status} #{HTTP_STATUS_CODES[status] || 'Unknown'}\r\n"
       for name, value in header
@@ -118,7 +122,7 @@ module EasyUp
 end
 
 def use(middleware, *args, &block)
-  EasyUp::CGIRunner::TOP_LEVEL_BUILDER.use(middleware, *args, &block)
+  EasyUp::CGIRunner.top_level_builder.use(middleware, *args, &block)
 end
 
 def ezup_run
