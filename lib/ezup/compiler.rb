@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # CGI compiler
 
+require 'erb'
+
 module Kernel
   alias ezup_original_autoload autoload
 
@@ -102,6 +104,20 @@ module EasyUp
       end
 
       data
+    end
+
+    CGI_ERB = File.join(File.dirname(__FILE__), 'cgi.erb')
+
+    class CGIContext
+      def initialize(c)
+        @c = c
+      end
+    end
+
+    def make_cgi_builtin_code
+      c = { :embedded_libraries => %w[ ezup ] + @include_libraries.map{|i| i.name } }
+      erb = ERB.new(IO.read(CGI_ERB, opt: { :encoding => Encoding::UTF_8 }))
+      erb.result(CGIContext.new(c).instance_eval{ binding })
     end
   end
 end
